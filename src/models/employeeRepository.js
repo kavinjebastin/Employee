@@ -7,18 +7,6 @@ const dbConfig = {
   database: "people",
 };
 const connection = mysql.createConnection(dbConfig);
-/**
- * function that establishes connection to database using the provided config
- */
-const establishConnection = () => {
-  connection.connect((error) => {
-    console.log(error ? error : `connected successfully to mysql`);
-  });
-};
-/**
- * function that terminates the connection to the database
- */
-const endConnection = () => connection.end();
 
 /**
  * @returns {Promise} - returns all the employee objects present in the database
@@ -32,12 +20,13 @@ const getAllEmployees = () => {
 /**
  * @param {number} id - accepts a numerical id and returns a promise possibly containing a single employee object
  */
-const getEmployeeById = (id) => {
+const getEmployeeById = async (id) => {
   const sql = `
         SELECT * 
         FROM employee 
         WHERE id = ${id}`;
-  return executeQuery(sql);
+  const data = await executeQuery(sql);
+  return data[0];
 };
 /**
  * @param {string} name - name of the employee to be fetched, may return more than one employee
@@ -53,30 +42,55 @@ const getEmployeeByName = (name) => {
 };
 
 /**
- * 
+ *
  * @param {string} email - email of the employee to - returns a single employee
- * @returns 
+ * @returns {Promise}
  */
-const getEmployeeByEmail = (email) => {
-    const sql = `
+const getEmployeeByEmail = async (email) => {
+  const sql = `
     SELECT * 
     FROM employee 
     WHERE email = '${email}'
-    `
-  return executeQuery(sql);
+    `;
+  const data =  await executeQuery(sql);
+  return data[0]
 };
+
+/**
+ *
+ * @param {number} phoneNumber - phoneNumber of the employee - returns a single employee
+ * @returns {Promise}
+ */
+const getEmployeeByPhoneNumber = async (phoneNumber) => {
+  const sql = `
+    SELECT * 
+    FROM employee 
+    WHERE email = '${phoneNumber}'
+    `;
+  const data =  await executeQuery(sql);
+  return data[0]
+};
+
+
 /**
  * @param {Object} employee - object containing name, companyname, role, salary, phoneNumber and email of a single employee
  * @returns {void}
  */
-const addEmployee = async ({name, companyName, role, salary, phoneNumber, email}) => {
-    const sql = `
+const addEmployee = async ({
+  name,
+  companyName,
+  role,
+  salary,
+  phoneNumber,
+  email,
+}) => {
+  const sql = `
         INSERT INTO employee (
             name, company_name, role, salary, phone_number, email
             ) VALUES ('${name}', '${companyName}', '${role}', ${salary}, ${phoneNumber}, '${email}')
-    `
-    executeUpdate(sql)
-}
+    `;
+  executeUpdate(sql);
+};
 
 /**
  * @param {number} id - id that uniquely identifies the employee to be deleted from the database
@@ -86,9 +100,9 @@ const deleteEmployeeById = async (id) => {
   const sql = `
     DELETE FROM employee
     WHERE id = ${id}  
-  `
-  executeUpdate(sql)
-}
+  `;
+  executeUpdate(sql);
+};
 /**
  * @param {string} email - email that uniquely identifies the employee to be deleted from the database
  * @returns {void}
@@ -97,9 +111,9 @@ const deleteEmployeeByEmail = async (email) => {
   const sql = `
     DELETE FROM employee
     WHERE email = '${email}'  
-  `
-  executeUpdate(sql)
-}
+  `;
+  executeUpdate(sql);
+};
 
 /**
  * @param {number} id - phone number that uniquely identifies the employee to be deleted from the database
@@ -109,19 +123,18 @@ const deleteEmployeeByPhoneNumber = async (phoneNumber) => {
   const sql = `
     DELETE FROM employee
     WHERE phone_number = ${phoneNumber}  
-  `
-  executeUpdate(sql)
-}
+  `;
+  executeUpdate(sql);
+};
 
 /**
  * so far, this function is just a implementation detail,
  * TODO: this will be changed soon
  */
-function executeUpdate (sqlQuery) {
-    executeQuery(sqlQuery)
-    .then(data => console.log(data))
-    .catch(error => console.log(error))
-
+function executeUpdate(sqlQuery) {
+  executeQuery(sqlQuery)
+    .then((data) => console.log(data))
+    .catch((error) => console.log(error));
 }
 
 /**
@@ -130,14 +143,11 @@ function executeUpdate (sqlQuery) {
  */
 function executeQuery(sqlQuery) {
   return new Promise((resolve, reject) => {
-    establishConnection();
     connection.query(sqlQuery, (error, data) => {
       if (error) {
         reject(error);
-        endConnection();
       } else {
         resolve(data);
-        endConnection();
       }
     });
   });
@@ -147,10 +157,11 @@ module.exports = {
   getEmployeeById,
   getEmployeeByName,
   getEmployeeByEmail,
+  getEmployeeByPhoneNumber,
 
   addEmployee,
-  
+
   deleteEmployeeById,
   deleteEmployeeByEmail,
-  deleteEmployeeByPhoneNumber
+  deleteEmployeeByPhoneNumber,
 };
