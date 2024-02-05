@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-exports.app = app;
 const employeeDAO = require("../models/employeeRepository");
 const bodyParser = require("body-parser");
 const { port, host } = require("./controller-config");
@@ -51,4 +50,7 @@ app.get(path.GET.email, (request, response) => {
 
 app.listen(port, () => console.log(`Express is on `));
 
-exports.HTTP_STATUS_CODE = HTTP_STATUS_CODE;
+module.exports = {
+  HTTP_STATUS_CODE,
+  app
+}
