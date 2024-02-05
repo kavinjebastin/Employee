@@ -1,8 +1,8 @@
 {
-  "name": "Employee",
+  "name": "employee",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/controller/employeeController.js",
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^16.4.1",
@@ -12,12 +12,18 @@
   },
   "devDependencies": {
     "body-parser": "^1.20.2",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.2.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./src/controller/employeeController.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kavin Jebastin",
   "license": "ISC"
 }

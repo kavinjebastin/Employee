@@ -2,14 +2,14 @@ const { config: DB_CONFIG, mysql } = require("./db-config");
 const connection = mysql.createConnection(DB_CONFIG);
 
 const table = {
-  id: 'id',
-  name: 'name',
-  companyName: 'company_name',
-  role: 'role',
-  salary: 'salary',
-  phoneNumber: 'phone_number',
-  email: 'email'
-}
+  id: "id",
+  name: "name",
+  companyName: "company_name",
+  role: "role",
+  salary: "salary",
+  phoneNumber: "phone_number",
+  email: "email",
+};
 
 /**
  * @returns {Promise<Employee[]>} - returns all the employee objects present in the database
@@ -20,18 +20,7 @@ const getAllEmployees = () => {
     FROM employee`;
   return executeQuery(sql);
 };
-/**
- * @param {number} id - accepts a numerical id and returns a promise possibly containing a single employee object
- * @returns {Promise<Employee>}
- */
-const getEmployeeById = async (id) => {
-  const sql = `
-        SELECT * 
-        FROM employee 
-        WHERE id = ${id}`;
-  const data = await executeQuery(sql);
-  return data[0];
-};
+
 /**
  * @param {string} name - name of the employee to be fetched, may return more than one employee
  * @returns {Promise<Employee[]>} - promise containing possibly the employee object
@@ -56,8 +45,14 @@ const getEmployeeByEmail = async (email) => {
     FROM employee 
     WHERE email = '${email}'
     `;
-  const data = await executeQuery(sql);
-  return data[0];
+  try {
+    const data = await executeQuery(sql);
+    return data[0];
+  } catch (error) {
+    return Promise.reject(
+      `Employee with email -> ${email} does not exit in database`
+    );
+  }
 };
 
 /**
@@ -68,7 +63,7 @@ const getEmployeeByPhoneNumber = async (phoneNumber) => {
   const sql = `
     SELECT * 
     FROM employee 
-    WHERE email = '${phoneNumber}'
+    WHERE phone_number = ${phoneNumber}
     `;
   const data = await executeQuery(sql);
   return data[0];
@@ -103,17 +98,14 @@ const addEmployee = async ({
   return executeUpdate(sql);
 };
 
-/**
- * @param {number} id - id that uniquely identifies the employee to be deleted from the database
- * @returns {number} - number of rows deleted
- */
-const deleteEmployeeById = async (id) => {
+const updatePhoneNumber = (email, newPhoneNumber) => {
   const sql = `
-    DELETE FROM employee
-    WHERE id = ${id}  
+    UPDATE employee
+    SET phone_number = ${newPhoneNumber}
+    WHERE email = '${email}'
   `;
-  return executeUpdate(sql);
 };
+
 /**
  * @param {string} email - email that uniquely identifies the employee to be deleted from the database
  * @returns {number} - number of deleted rows
@@ -135,6 +127,7 @@ const deleteEmployeeByPhoneNumber = async (phoneNumber) => {
     DELETE FROM employee
     WHERE phone_number = ${phoneNumber}  
   `;
+  console.log(sql);
   return executeUpdate(sql);
 };
 
@@ -174,14 +167,14 @@ function executeQuery(sqlQuery) {
 }
 module.exports = {
   getAllEmployees,
-  getEmployeeById,
   getEmployeesByName,
   getEmployeeByEmail,
   getEmployeeByPhoneNumber,
 
   addEmployee,
 
-  deleteEmployeeById,
   deleteEmployeeByEmail,
   deleteEmployeeByPhoneNumber,
+
+  table,
 };
