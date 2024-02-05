@@ -2,63 +2,53 @@ const express = require("express");
 const app = express();
 const employeeDAO = require("../models/employeeRepository");
 const bodyParser = require("body-parser");
+const { port, host } = require("./controller-config");
+const { handleGetRequest } = require("../service/employeeService");
 
 app.use(bodyParser.json());
 
-const port = 5500;
 const path = {
-  base: "/",
-  email: "/email/:employee_email",
-  phoneNumber: "/phoneNumber/",
-  addEmployee: "/add",
+  GET: {
+    base: "/all",
+    email: "/email/:email",
+    phoneNumber: "/phoneNumber/:contact",
+  },
+  POST: {
+    addEmployee: "/add",
+  },
+  UPDATE: {},
+  DELETE: {},
 };
 const HTTP_STATUS_CODE = {
   OK: 200,
   INTERNAL_SERVER_ERROR: 500,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  NOT_MODIFIED: 304,
+  SERVICE_UNAVIALABLE: 503,
 };
 
-app.get(path.base, (_, response) => {
-  console.log("get request successful");
-  response.contentType("json");
-  employeeDAO
-    .getAllEmployees()
-    .then((data) => {
-      response.json(data);
-      response.statusCode = HTTP_STATUS_CODE.OK;
-    })
-    .catch((error) => {
-      console.error(error);
-      response.statusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
-      response.statusMessage = "ERROR fetching data from database";
-    })
-    .finally(() => {
-      response.end();
-    });
+
+const STATUS_MESSAGE = {
+  NOT_FOUND: (data) => `${data} does not exist in the database`,
+};
+
+app.get(path.GET.base, (_, response) => {
+  handleGetRequest(response, employeeDAO.getAllEmployees());
 });
-// slug / route parameters
-app.get(path.email, (request, response) => {
-  const { employee_email: employeeEmail } = request.params;
-  if (employeeEmail) {
-    employeeDAO
-      .getEmployeeByEmail(employeeEmail)
-      .then((data) => {
-        response.statusCode = HTTP_STATUS_CODE.OK;
-        response.json(data);
-      })
-      .catch((error) => {
-        response.statusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
-        response.statusMessage = "Error fetching email from database";
-        console.log(error);
-      })
-      .finally(() => {
-        response.end();
-      });
+// route parameters
+app.get(path.GET.email, (request, response) => {
+  const { email } = request.params;
+  if (email) {
+    handleGetRequest(response, employeeDAO.getEmployeeByEmail(email));
+  } else {
+    response.statusCode = HTTP_STATUS_CODE.NOT_FOUND;
+    response.statusMessage = STATUS_MESSAGE.NOT_FOUND("Email");
   }
 });
 
-app.post(path.addEmployee, (request, response) => {
+app.post(path.POST.addEmployee, (request, response) => {
   const {
-    id,
     name,
     company_name: companyName,
     role,
@@ -66,8 +56,8 @@ app.post(path.addEmployee, (request, response) => {
     phone_number: phoneNumber,
     email,
   } = request.body;
+
   const employee = {
-    id,
     name,
     companyName,
     role,
@@ -80,14 +70,17 @@ app.post(path.addEmployee, (request, response) => {
     response.status = HTTP_STATUS_CODE.OK;
     response.statusMessage = "Employee added to database successfully";
   } catch (error) {
-    console.log(error);
     response.status = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
-    response.statusMessage = "Error adding data to database";
+    response.statusMessage = error.message;
   } finally {
     response.end();
   }
 });
 
-app.listen(port, () =>
-  console.log(`Express is listening on http://localhost:${port}`)
-);
+app.listen(port, () => console.log(`Express is on `));
+
+module.exports = {
+  path,
+  app, 
+  HTTP_STATUS_CODE
+}
