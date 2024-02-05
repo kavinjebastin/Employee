@@ -135,7 +135,7 @@ const deleteEmployeeByPhoneNumber = async (phoneNumber) => {
     DELETE FROM employee
     WHERE phone_number = ${phoneNumber}  
   `;
-  executeUpdate(sql);
+  return executeUpdate(sql);
 };
 
 /**

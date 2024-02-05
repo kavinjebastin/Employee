@@ -23,33 +23,10 @@ function handleGetRequest(response, callback) {
       response.end();
     });
 }
-exports.handleGetRequest = handleGetRequest;
-app.post(path.POST.addEmployee, (request, response) => {
-  const {
-    name,
-    company_name: companyName,
-    role,
-    salary,
-    phone_number: phoneNumber,
-    email,
-  } = request.body;
 
-  const employee = {
-    name,
-    companyName,
-    role,
-    salary,
-    phoneNumber,
-    email,
-  };
-  try {
-    employeeDAO.addEmployee(employee);
-    response.status = HTTP_STATUS_CODE.OK;
-    response.statusMessage = "Employee added to database successfully";
-  } catch (error) {
-    response.status = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
-    response.statusMessage = error.message;
-  } finally {
-    response.end();
-  }
-});
+function handlePostRequest(request, response) {
+    // todo : implement this
+}
+module.exports = {
+    handleGetRequest
+}
