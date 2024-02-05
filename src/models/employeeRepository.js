@@ -1,6 +1,16 @@
 const { config: DB_CONFIG, mysql } = require("./db-config");
 const connection = mysql.createConnection(DB_CONFIG);
 
+const table = {
+  id: 'id',
+  name: 'name',
+  companyName: 'company_name',
+  role: 'role',
+  salary: 'salary',
+  phoneNumber: 'phone_number',
+  email: 'email'
+}
+
 /**
  * @returns {Promise<Employee[]>} - returns all the employee objects present in the database
  */
@@ -26,7 +36,7 @@ const getEmployeeById = async (id) => {
  * @param {string} name - name of the employee to be fetched, may return more than one employee
  * @returns {Promise<Employee[]>} - promise containing possibly the employee object
  */
-const getEmployeeByName = (name) => {
+const getEmployeesByName = (name) => {
   const sql = `
   SELECT * 
   FROM employee 
@@ -38,7 +48,7 @@ const getEmployeeByName = (name) => {
 /**
  *
  * @param {string} email - email of the employee to - returns a single employee
- * @returns {Promise<Employee> }
+ * @returns {Promise<Employee>}
  */
 const getEmployeeByEmail = async (email) => {
   const sql = `
@@ -51,7 +61,6 @@ const getEmployeeByEmail = async (email) => {
 };
 
 /**
- *
  * @param {number} phoneNumber - phoneNumber of the employee - returns a single employee
  * @returns {Promise<Employee>}
  */
@@ -67,7 +76,7 @@ const getEmployeeByPhoneNumber = async (phoneNumber) => {
 
 /**
  * @typedef Employee
- * @author Kavin Jebastin
+ * @author KavinJebastin
  * @description A object containing the details of a single employee
  * @param {Object} this -
  * @param {string} this.name
@@ -166,7 +175,7 @@ function executeQuery(sqlQuery) {
 module.exports = {
   getAllEmployees,
   getEmployeeById,
-  getEmployeeByName,
+  getEmployeesByName,
   getEmployeeByEmail,
   getEmployeeByPhoneNumber,
 
