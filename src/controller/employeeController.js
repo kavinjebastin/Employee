@@ -19,7 +19,6 @@ const path = {
   UPDATE: {},
   DELETE: {},
 };
-exports.path = path;
 const HTTP_STATUS_CODE = {
   OK: 200,
   INTERNAL_SERVER_ERROR: 500,
@@ -51,6 +50,7 @@ app.get(path.GET.email, (request, response) => {
 app.listen(port, () => console.log(`Express is on `));
 
 module.exports = {
-  HTTP_STATUS_CODE,
-  app
+  path,
+  app, 
+  HTTP_STATUS_CODE
 }
