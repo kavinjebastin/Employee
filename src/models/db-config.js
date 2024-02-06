@@ -19,7 +19,18 @@ const [config, mysql] =
     ? [windowsConfig, require("mysql2")]
     : null;
 
+const table = {
+  id: "id",
+  name: "name",
+  companyName: "company_name",
+  role: "role",
+  salary: "salary",
+  phoneNumber: "phone_number",
+  email: "email",
+};
+
 module.exports = {
   config,
   mysql,
+  table
 };

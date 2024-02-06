@@ -1,3 +1,4 @@
+"use strict";
 /**
  * @param {string} email
  * @returns {boolean} - true if the email is valid and false if invalid
@@ -29,7 +30,7 @@ const isValidPhoneNumber = (phoneNumber) => {
  * @returns {boolean}
  */
 const isValidEmployee = (employee) => {
-  for ([key, value] of Object.entries(employee)) {
+  for (const [key, value] of Object.entries(employee)) {
     if (
       value == false &&
       key !== "companyName" &&

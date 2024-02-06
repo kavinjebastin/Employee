@@ -1,3 +1,4 @@
+"use strict";
 const { addEmployee } = require("../models/employeeRepository");
 const { isValidEmployee, isValidParam } = require("../utils/validate");
 const HTTP_STATUS_CODE = {
@@ -12,6 +13,8 @@ const HTTP_STATUS_CODE = {
 const STATUS_MESSAGE = {
   NOT_FOUND: (data) => `User with ${data} does not exist in the database`,
   BAD_REQUEST: (data) => `Invalid Request, ${data}`,
+  INTERNAL_SERVER_ERROR: (message) =>
+    `Error fetching data from database:\n${message}`,
   DELETE_USER_SUCCESS: (data) => `User with ${data} deleted from the database`,
   DELETE_USER_FAILED: (data) => `User with ${data} could not be deleted`,
 };
@@ -31,12 +34,14 @@ const handleGetRequest = (response, promise) => {
         response.json(data);
       } else {
         response.statusCode = HTTP_STATUS_CODE.NOT_FOUND;
-        response.statusMessage = `Data does not exist in database`;
+        response.statusMessage = STATUS_MESSAGE.NOT_FOUND("given");
       }
     })
     .catch((error) => {
       response.statusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
-      response.statusMessage = `Error fetching data from database:\n${error.message}`;
+      response.statusMessage = STATUS_MESSAGE.INTERNAL_SERVER_ERROR(
+        error.message
+      );
     })
     .finally(() => {
       response.end();
@@ -56,26 +61,10 @@ const handleGetWithRoutePath = (response, callback, param, type) => {
 };
 
 const handlePostRequest = async (request, response) => {
-  const {
-    name,
-    company_name: companyName,
-    role,
-    salary,
-    phone_number: phoneNumber,
-    email,
-  } = request.body;
-
-  const employee = {
-    name,
-    companyName,
-    role,
-    salary,
-    phoneNumber,
-    email,
-  };
+  const employee = getEmployee(request.body);
   try {
     if (isValidEmployee(employee)) {
-      rows = addEmployee(employee);
+      addEmployee(employee);
       response.statusCode = HTTP_STATUS_CODE.OK;
       response.statusMessage = `Data of ${employee.name} added to database successfully`;
     } else {
@@ -91,6 +80,9 @@ const handlePostRequest = async (request, response) => {
     response.end();
   }
 };
+
+const handlePut = async () => {};
+
 const handleDelete = async (response, callback, param, type) => {
   const isValid = isValidParam(type, param);
   let data;
@@ -99,20 +91,41 @@ const handleDelete = async (response, callback, param, type) => {
     if (data) {
       response.statusCode = HTTP_STATUS_CODE.OK;
       response.statusMessage = STATUS_MESSAGE.DELETE_USER_SUCCESS(param);
-    } 
-  } 
-  if (!isValid || ! data) {
+    }
+  }
+  if (!isValid || !data) {
     response.statusCode = HTTP_STATUS_CODE.NOT_MODIFIED;
     response.statusMessage = STATUS_MESSAGE.DELETE_USER_FAILED(param);
   }
   response.end();
 };
 
+function getEmployee(body) {
+  const {
+    name,
+    company_name: companyName,
+    role,
+    salary,
+    phone_number: phoneNumber,
+    email,
+  } = body;
+  return {
+    name,
+    companyName,
+    role,
+    salary,
+    phoneNumber,
+    email,
+  };
+}
+
 module.exports = {
   handleGetRequest,
   handleGetWithRoutePath,
 
   handlePostRequest,
+
+  handlePut,
 
   handleDelete,
 };

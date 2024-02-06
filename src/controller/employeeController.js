@@ -1,3 +1,4 @@
+"use strict";
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -5,18 +6,19 @@ const { port, host } = require("./controller-config");
 const {
   getAllEmployees,
   getEmployeeByEmail,
-  deleteEmployeeByEmail,
   getEmployeeByPhoneNumber,
-  table,
-  deleteEmployeeByPhoneNumber
+
+  deleteEmployeeByEmail,
+  deleteEmployeeByPhoneNumber,
 } = require("../models/employeeRepository");
 const {
   handleGetRequest: handleGET,
   handleGetWithRoutePath,
   handlePostRequest: handlePOST,
-  handleDelete: handleDELETE
+  handlePut: handlePUT,
+  handleDelete: handleDELETE,
 } = require("../service/employeeService");
-
+const { table } = require("../models/db-config");
 app.use(bodyParser.json());
 
 const path = {
@@ -29,11 +31,14 @@ const path = {
     addEmployee: "/add",
   },
   UPDATE: {
-    phoneNumber: '/phone/'
+    phoneNumber: "/phone/",
+  },
+  PATCH: {
+    phoneNumber: "",
   },
   DELETE: {
-    email: '/email/:email',
-    phoneNumber: '/phone/:contact'
+    email: "/email/:email",
+    phoneNumber: "/phone/:contact",
   },
 };
 
@@ -43,29 +48,50 @@ app.get(path.GET.base, (_, response) => {
 
 // route parameters
 app.get(path.GET.email, (request, response) => {
-  handleGetWithRoutePath(response, getEmployeeByEmail, request.params?.email, table.email);
-
+  handleGetWithRoutePath(
+    response,
+    getEmployeeByEmail,
+    request.params?.email,
+    table.email
+  );
 });
 
 app.get(path.GET.phoneNumber, (request, response) => {
-  handleGetWithRoutePath(response, getEmployeeByPhoneNumber, request.params?.phone, 'phoneNumber')
-})
+  handleGetWithRoutePath(
+    response,
+    getEmployeeByPhoneNumber,
+    request.params?.phone,
+    "phoneNumber"
+  );
+});
 
 app.post(path.POST.addEmployee, (request, response) => {
   handlePOST(request, response);
 });
 
-app.put(path.UPDATE, (request, response) => {
+app.put(path.UPDATE.phoneNumber, (request, response) => {
+  handlePUT(request, response);
   // TODO implement this -> change thepath of update while you are at it
-})
+});
 
+app.patch(path.PATCH.phoneNumber, (request, response) => {});
 
 app.delete(path.DELETE.email, (request, response) => {
-  handleDELETE(response, deleteEmployeeByEmail, request.params?.email, table.email)
-})
+  handleDELETE(
+    response,
+    deleteEmployeeByEmail,
+    request.params?.email,
+    table.email
+  );
+});
 
 app.delete(path.DELETE.phoneNumber, (request, response) => {
-  handleDELETE(response, deleteEmployeeByPhoneNumber, request.params?.phone, 'phoneNumber')
-})
+  handleDELETE(
+    response,
+    deleteEmployeeByPhoneNumber,
+    request.params?.contact,
+    "phoneNumber"
+  );
+});
 
 app.listen(port, () => console.log(`Express is listening on port ${port}`));

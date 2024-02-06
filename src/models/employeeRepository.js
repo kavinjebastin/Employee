@@ -1,15 +1,7 @@
-const { config: DB_CONFIG, mysql } = require("./db-config");
+"use strict"
+const { config: DB_CONFIG, mysql, table } = require("./db-config");
 const connection = mysql.createConnection(DB_CONFIG);
 
-const table = {
-  id: "id",
-  name: "name",
-  companyName: "company_name",
-  role: "role",
-  salary: "salary",
-  phoneNumber: "phone_number",
-  email: "email",
-};
 
 /**
  * @returns {Promise<Employee[]>} - returns all the employee objects present in the database
@@ -104,6 +96,7 @@ const updatePhoneNumber = (email, newPhoneNumber) => {
     SET phone_number = ${newPhoneNumber}
     WHERE email = '${email}'
   `;
+  
 };
 
 /**
@@ -127,7 +120,6 @@ const deleteEmployeeByPhoneNumber = async (phoneNumber) => {
     DELETE FROM employee
     WHERE phone_number = ${phoneNumber}  
   `;
-  console.log(sql);
   return executeUpdate(sql);
 };
 
@@ -176,5 +168,4 @@ module.exports = {
   deleteEmployeeByEmail,
   deleteEmployeeByPhoneNumber,
 
-  table,
 };

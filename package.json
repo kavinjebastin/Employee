@@ -2,7 +2,7 @@
   "name": "employee",
   "version": "1.0.0",
   "description": "",
-  "main": "src/controller/employeeController.js",
+  "main": "src/controller/employeeController",
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^16.4.1",
@@ -17,7 +17,8 @@
     "vitest": "^1.2.2"
   },
   "scripts": {
-    "start": "./src/controller/employeeController.js",
+    "start": "node src/controller/employeeController",
+    "devstart": "nodemon src/controller/employeeController",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
