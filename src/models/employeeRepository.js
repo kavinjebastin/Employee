@@ -12,18 +12,6 @@ const getAllEmployees = () => {
   return executeQuery(sql);
 };
 
-/**
- * @param {string} name - name of the employee to be fetched, may return more than one employee
- * @returns {Promise<Employee[]>} - promise containing possibly the employee object
- */
-const getEmployeesByName = (name) => {
-  const sql = `
-  SELECT * 
-  FROM employee 
-  WHERE name = '${name}'
-  `;
-  return executeQuery(sql);
-};
 
 /**
  *
@@ -157,11 +145,12 @@ function executeQuery(sqlQuery) {
 }
 module.exports = {
   getAllEmployees,
-  getEmployeesByName,
   getEmployeeByEmail,
   getEmployeeByPhoneNumber,
 
   addEmployee,
+
+  updatePhoneNumber,
 
   deleteEmployeeByEmail,
   deleteEmployeeByPhoneNumber,
