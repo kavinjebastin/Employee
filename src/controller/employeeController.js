@@ -1,6 +1,6 @@
 "use strict";
 const express = require("express");
-const app = express();
+const {get, put, post, patch, delete: del, listen} = express();
 const bodyParser = require("body-parser");
 const { port, host } = require("./controller-config");
 const {
@@ -42,12 +42,12 @@ const path = {
   },
 };
 
-app.get(path.GET.base, (_, response) => {
+get(path.GET.base, (_, response) => {
   handleGET(response, getAllEmployees());
 });
 
 // route parameters
-app.get(path.GET.email, (request, response) => {
+get(path.GET.email, (request, response) => {
   handleGetWithRoutePath(
     response,
     getEmployeeByEmail,
@@ -56,7 +56,7 @@ app.get(path.GET.email, (request, response) => {
   );
 });
 
-app.get(path.GET.phoneNumber, (request, response) => {
+get(path.GET.phoneNumber, (request, response) => {
   handleGetWithRoutePath(
     response,
     getEmployeeByPhoneNumber,
@@ -65,18 +65,18 @@ app.get(path.GET.phoneNumber, (request, response) => {
   );
 });
 
-app.post(path.POST.addEmployee, (request, response) => {
+post(path.POST.addEmployee, (request, response) => {
   handlePOST(request, response);
 });
 
-app.put(path.UPDATE.phoneNumber, (request, response) => {
+put(path.UPDATE.phoneNumber, (request, response) => {
   handlePUT(request, response);
   // TODO implement this -> change thepath of update while you are at it
 });
 
-app.patch(path.PATCH.phoneNumber, (request, response) => {});
+patch(path.PATCH.phoneNumber, (request, response) => {});
 
-app.delete(path.DELETE.email, (request, response) => {
+del(path.DELETE.email, (request, response) => {
   handleDELETE(
     response,
     deleteEmployeeByEmail,
@@ -85,7 +85,7 @@ app.delete(path.DELETE.email, (request, response) => {
   );
 });
 
-app.delete(path.DELETE.phoneNumber, (request, response) => {
+del(path.DELETE.phoneNumber, (request, response) => {
   handleDELETE(
     response,
     deleteEmployeeByPhoneNumber,
@@ -94,4 +94,4 @@ app.delete(path.DELETE.phoneNumber, (request, response) => {
   );
 });
 
-app.listen(port, () => console.log(`Express is listening on port ${port}`));
+listen(port, () => console.log(`Express is listening on port ${port}`));

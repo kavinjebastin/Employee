@@ -99,7 +99,7 @@ const handlePostRequest = (request, response) => {
   }
 };
 
-const handlePut = async () => {};
+const handlePut = () => {};
 
 const handleDelete = async (response, callback, param, type) => {
   if (isValidParam(type, param)) {

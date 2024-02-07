@@ -12,13 +12,18 @@ const windowsConfig = {
 };
 windowsConfig.password = "admin";
 
-const [config, mysql] =
-  HOST_OS === "linux"
-    ? [linuxConfig, require("mysql")]
-    : HOST_OS === "win32"
-    ? [windowsConfig, require("mysql2")]
-    : null;
+const [config, mysql] = [getConfig(HOST_OS), getMysql(HOST_OS)];
+function getConfig(os) {
+  if (os === "linux") return linuxConfig;
+  if (os === "win32") return windowsConfig;
+  return null;
+}
 
+function getMysql(os) {
+  if (os === "linux") return require("mysql");
+  if (os === "win32") return require("mysql2");
+  return null;
+}
 const table = {
   id: "id",
   name: "name",
@@ -32,5 +37,5 @@ const table = {
 module.exports = {
   config,
   mysql,
-  table
+  table,
 };

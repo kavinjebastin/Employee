@@ -12,7 +12,6 @@ const getAllEmployees = () => {
   return executeQuery(sql);
 };
 
-
 /**
  *
  * @param {string} email - email of the employee to - returns a single employee
@@ -29,7 +28,7 @@ const getEmployeeByEmail = async (email) => {
     return data[0];
   } catch (error) {
     return Promise.reject(
-      `Employee with email -> ${email} does not exit in database`
+      new Error(`Employee with email -> ${email} does not exit in database`)
     );
   }
 };
@@ -83,6 +82,7 @@ const updatePhoneNumber = (email, newPhoneNumber) => {
     SET phone_number = ${newPhoneNumber}
     WHERE email = '${email}'
   `;
+  return executeUpdate(sql);
 };
 
 /**
@@ -112,19 +112,10 @@ const deleteEmployeeByPhoneNumber = async (phoneNumber) => {
 /**
  * @param {string} sqlQuery
  * @returns {Promise<number>}
- *
- * TODO: this will be changed soon - so far, this function is just a implementation detail
  */
 async function executeUpdate(sqlQuery) {
-  const {
-    fieldCount,
-    affectedRows,
-    insertId,
-    info,
-    serverStatus,
-    warningStatus,
-    changedRows,
-  } = await executeQuery(sqlQuery);
+  // execute query also returns -> fieldCount,insertId, info, serverStatus,warningStatus,changedRows
+  const { affectedRows } = await executeQuery(sqlQuery);
   return affectedRows;
 }
 

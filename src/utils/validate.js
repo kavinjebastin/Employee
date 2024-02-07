@@ -4,7 +4,7 @@
  * @returns {boolean} - true if the email is valid and false if invalid
  */
 const isValidEmail = (email) => {
-  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  const regex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
   return !!email.match(regex)?.[0];
 };
 
@@ -31,12 +31,7 @@ const isValidPhoneNumber = (phoneNumber) => {
  */
 const isValidEmployee = (employee) => {
   for (const [key, value] of Object.entries(employee)) {
-    if (
-      value == false &&
-      key !== "companyName" &&
-      key !== "role" &&
-      key !== "salary"
-    ) {
+    if (!value && key !== "companyName" && key !== "role" && key !== "salary") {
       return false;
     }
   }
