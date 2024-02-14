@@ -18,18 +18,20 @@ const STATUS_MESSAGE = {
   INTERNAL_SERVER_ERROR: (message) =>
     `Error fetching data from database:\n${message}`,
   DELETE_USER_SUCCESS: (data) => `User with ${data} deleted from the database`,
-  DELETE_USER_FAILED: (data) => `User with contact -> ${data} could not be deleted`,
+  DELETE_USER_FAILED: (data) =>
+    `User with contact -> ${data} could not be deleted`,
   CONFLICTING_DATA: (user) =>
     `Data of ${user} conflicts with existing user data in database`,
   POST_FAILED: (user) => `unable to add ${user} to database`,
   POST_SUCCESS: (name) => `Data of ${name} added to database successfully`,
-  DELETE_NON_EXISTENT_RECORD: (contact) => `User with contact ->  ${contact} does not exist in database`
+  DELETE_NON_EXISTENT_RECORD: (contact) =>
+    `User with contact ->  ${contact} does not exist in database`,
 };
 
 /**
  * @typedef Employee
- * @param {Function} promise
- * @param {Response} response
+ * @param {Function<Promise>} promise
+ * @param {import("express").Response} response
  * @returns {void}
  */
 const handleGetRequest = (response, promise) => {
@@ -54,7 +56,12 @@ const handleGetRequest = (response, promise) => {
       response.end();
     });
 };
-
+/**
+ * @param {import("express").Response} response
+ * @param {Function} callback
+ * @param {string} param
+ * @param {string} type
+ */
 const handleGetWithRoutePath = (response, callback, param, type) => {
   if (isValidParam(type, param)) {
     handleGetRequest(response, callback(param));
@@ -66,7 +73,10 @@ const handleGetWithRoutePath = (response, callback, param, type) => {
     response.end();
   }
 };
-
+/**
+ * @param {import("express").Request} request
+ * @param {import("express").Response} response
+ */
 const handlePostRequest = (request, response) => {
   const employee = getEmployee(request.body);
   if (isValidEmployee(employee)) {
@@ -113,7 +123,9 @@ const handleDelete = async (response, callback, param, type) => {
     }
   } else {
     response.statusCode = HTTP_STATUS_CODE.BAD_REQUEST;
-    response.statusMessage = STATUS_MESSAGE.BAD_REQUEST(`${param} is not a valid ${type}`)
+    response.statusMessage = STATUS_MESSAGE.BAD_REQUEST(
+      `${param} is not a valid ${type}`
+    );
   }
   response.end();
 };

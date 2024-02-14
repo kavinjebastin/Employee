@@ -2,7 +2,10 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const { port, host } = require("./controller-config");
+const {
+  controllerConfig: { host, port },
+  table,
+} = require("../utils/config");
 const {
   getAllEmployees,
   getEmployeeByEmail,
@@ -18,7 +21,7 @@ const {
   handlePut: handlePUT,
   handleDelete: handleDELETE,
 } = require("../service/employeeService");
-const { table } = require("../models/db-config");
+
 app.use(bodyParser.json());
 
 const path = {
@@ -30,7 +33,7 @@ const path = {
   POST: {
     addEmployee: "/add",
   },
-  UPDATE: {
+  PUT: {
     phoneNumber: "/phone/",
   },
   PATCH: {
@@ -47,15 +50,17 @@ app.get(path.GET.base, (_, response) => {
 });
 
 // route parameters
-app.get(path.GET.email, (request, response, next) => {
-  handleGetWithRoutePath(
-    response,
-    getEmployeeByEmail,
-    request.params?.email,
-    table.email
-  );
-  next()
-}, () => console.log('next callback function is called'));
+app.get(
+  path.GET.email,
+  (request, response) => {
+    handleGetWithRoutePath(
+      response,
+      getEmployeeByEmail,
+      request.params?.email,
+      table.email
+    );
+  }
+);
 
 app.get(path.GET.phoneNumber, (request, response) => {
   handleGetWithRoutePath(
@@ -68,11 +73,6 @@ app.get(path.GET.phoneNumber, (request, response) => {
 
 app.post(path.POST.addEmployee, (request, response) => {
   handlePOST(request, response);
-});
-
-app.put(path.UPDATE.phoneNumber, (request, response) => {
-  handlePUT(request, response);
-  // TODO implement this -> change thepath of update while you are at it
 });
 
 app.patch(path.PATCH.phoneNumber, (request, response) => {});
@@ -95,4 +95,6 @@ app.delete(path.DELETE.phoneNumber, (request, response) => {
   );
 });
 
-app.listen(port, () => console.log(`Express is listening on port ${port}`));
+app.listen(port, () =>
+  console.log(`Express is listening on port http://${host}:${port}`)
+);

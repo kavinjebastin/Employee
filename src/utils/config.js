@@ -1,5 +1,13 @@
 const HOST_OS = process.platform; // linux | win32
 
+const port = process.argv[2];
+const host = process.argv[3];
+
+const controllerConfig = {
+  port: port || 5500,
+  host: host || "localhost",
+};
+
 const linuxConfig = {
   host: "localhost",
   user: "root",
@@ -9,18 +17,19 @@ const linuxConfig = {
 
 const windowsConfig = {
   ...linuxConfig,
+  password: "admin",
 };
-windowsConfig.password = "admin";
 
-const [config, mysql] = [getConfig(HOST_OS), getMysql(HOST_OS)];
-function getConfig(os) {
+const [DB_CONFIG, mysql] = [getDBConfig(HOST_OS), getMysqlLibrary(HOST_OS)];
+
+function getDBConfig(os) {
   if (os === "linux") return linuxConfig;
   if (os === "win32") return windowsConfig;
   return null;
 }
 
-function getMysql(os) {
-  if (os === "linux") return require("mysql");
+function getMysqlLibrary(os) {
+  if (os === "linux") return require("mysql2");
   if (os === "win32") return require("mysql2");
   return null;
 }
@@ -35,7 +44,8 @@ const table = {
 };
 
 module.exports = {
-  config,
+  controllerConfig,
+  DB_CONFIG,
   mysql,
   table,
 };

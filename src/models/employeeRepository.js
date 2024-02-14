@@ -1,5 +1,5 @@
 "use strict";
-const { config: DB_CONFIG, mysql, table } = require("./db-config");
+const { DB_CONFIG, mysql, table } = require("../utils/config");
 const connection = mysql.createConnection(DB_CONFIG);
 
 /**
