@@ -2,6 +2,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const service = require('../service/service')
 const {
   controllerConfig: { host, port },
   table,
@@ -45,9 +46,7 @@ const path = {
   },
 };
 
-app.get(path.GET.base, (_, response) => {
-  handleGET(response, getAllEmployees());
-});
+app.get(path.GET.base, service.getAllEmployees);
 
 // route parameters
 app.get(
