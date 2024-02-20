@@ -158,4 +158,6 @@ module.exports = {
   handlePut,
 
   handleDelete,
+  HTTP_STATUS_CODE,
+  STATUS_MESSAGE
 };
